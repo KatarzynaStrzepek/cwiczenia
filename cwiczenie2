@@ -1,0 +1,78 @@
+import re
+import matplotlib.pyplot as plt
+
+# Odczytanie sekwencji z pliku
+with open("ec.fasta", "r") as f:
+    g = f.read()
+
+# Usunięcie znaków nowej linii
+g = g.replace('\n', '')
+
+N = len(g)
+print("Długość sekwencji:", N)
+
+# Obliczenie stosunków A/T i G/C
+AT_ratio = g.count("A") / g.count("T")
+GC_ratio = g.count("G") / g.count("C")
+print("Stosunek A/T:", AT_ratio)
+print("Stosunek G/C:", GC_ratio)
+
+# Tworzenie listy dinukleotydów
+nukleotydy = ["A", "T", "G", "C"]
+din = [n1 + n2 for n1 in nukleotydy for n2 in nukleotydy]
+
+# Obliczenie częstości występowania dinukleotydów
+Z = [len(re.findall('(?=' + x + ')', g)) / (N - 1) for x in din]
+
+print("Częstości występowania dinukleotydów:")
+for i, dinukleotyd in enumerate(din):
+    print(dinukleotyd, round(Z[i], 4))
+
+# Obliczenie częstości trójek nukleotydów
+trin = [n1 + n2 + n3 for n1 in nukleotydy for n2 in nukleotydy for n3 in nukleotydy]
+Z_trin = [len(re.findall('(?=' + x + ')', g)) / (N - 2) for x in trin]
+
+print("Częstości występowania trójek nukleotydów:")
+for i, trinukleotyd in enumerate(trin):
+    print(trinukleotyd, round(Z_trin[i], 6))
+
+# Obliczenie częstości czwórek nukleotydów
+quadin = [n1 + n2 + n3 + n4 for n1 in nukleotydy for n2 in nukleotydy for n3 in nukleotydy for n4 in nukleotydy]
+Z_quadin = [len(re.findall('(?=' + x + ')', g)) / (N - 3) for x in quadin]
+
+print("Częstości występowania czwórek nukleotydów:")
+for i, quadinukleotyd in enumerate(quadin):
+    print(quadinukleotyd, round(Z_quadin[i], 8))
+
+# Definicja funkcji, która dla zadanej sekwencji zwraca sekwencję do niej odwrotnie komplementarną
+def REV_COM_DNA(seq):
+    complementary_code = {"A":"T", "T":"A", "G":"C", "C":"G"}
+    rev_com_seq = ''
+    for elem in seq:
+        rev_com_seq = complementary_code[elem] + rev_com_seq
+    return rev_com_seq
+
+# ... (reszta kodu)
+
+# Obliczenie słownika częstości dinukleotydów
+czestosci = dict(zip(din, [round(x, 3) for x in Z]))
+
+# Obliczenie stosunków częstości dla dinukleotydów i ich odwrotnie do nich komplementarnych
+unikatowe = set()
+ile = []
+for x in din:
+    rev_complement_x = REV_COM_DNA(x)
+    if rev_complement_x not in unikatowe:
+        ile.append(czestosci[x] / czestosci[rev_complement_x])
+        unikatowe.add(x)
+
+print("Stosunki częstości dinukleotydów i ich odwrotnie do nich komplementarnych:")
+print(ile)
+
+
+# Narysowanie histogramów
+plt.hist(ile, bins=30, alpha=0.7)
+plt.xlabel("Stosunki częstości")
+plt.ylabel("Liczba dinukleotydów")
+plt.title("Histogram stosunków częstości dinukleotydów i ich odwrotnie komplementarnych")
+plt.show()
