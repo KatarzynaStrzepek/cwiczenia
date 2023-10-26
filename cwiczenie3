@@ -1,0 +1,22 @@
+# Ilość aminokwasów
+ilosc_aminokwasow = 20
+
+# Sekwencje rozpoznawane przez kaspazę-3
+sekwencje_kaspazy_3 = ["DXXD", "EXXD", "DXXE"]
+
+# Obliczanie liczby możliwych sekwencji dla kaspazy-3
+liczba_sekwencji_kaspazy_3 = 0
+for sekwencja in sekwencje_kaspazy_3:
+    liczba_sekwencji_kaspazy_3 += ilosc_aminokwasow ** sekwencja.count("X")
+
+# Sekwencje rozpoznawane przez kalpainę-2
+sekwencje_kalpaina_2 = ["LX", "VX", "IX"]
+
+# Obliczanie liczby możliwych sekwencji dla kalpaina-2
+liczba_sekwencji_kalpaina_2 = 0
+for sekwencja in sekwencje_kalpaina_2:
+    liczba_sekwencji_kalpaina_2 += ilosc_aminokwasow ** sekwencja.count("X")
+
+# Wyniki
+print("Liczba możliwych sekwencji rozpoznawanych przez kaspazę-3:", liczba_sekwencji_kaspazy_3)
+print("Liczba możliwych sekwencji rozpoznawanych przez kalpainę-2:", liczba_sekwencji_kalpaina_2)
